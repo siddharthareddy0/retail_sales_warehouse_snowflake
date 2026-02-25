@@ -1,0 +1,111 @@
+---
+config:
+  theme: base
+  look: rounded
+  layout: dagre
+---
+flowchart LR
+    %% 1. ENRICHED SOURCES
+    subgraph Sources ["📥 INGESTION SOURCES"]
+        direction TB
+        subgraph Sources_Card [" "]
+            direction TB
+            S_Icon["📡"]
+            SRC_CRM["📁<br><b>Landing Zone</b><br><small>S3 / ADLS (CSV/JSON)</small>"]
+            SRC_ERP["🗄️<br><b>Operational DB</b><br><small>Postgres / CDC</small>"]
+            S_Icon --> SRC_CRM --> SRC_ERP
+        end
+    end
+
+    %% 2. DATA WAREHOUSE WITH QUALITY GATES
+    subgraph DWH ["<b>DATA WAREHOUSING</b>"]
+        direction LR
+        
+        %% Bronze Layer
+        subgraph Bronze ["<b>Bronze (Raw)</b>"]
+            direction TB
+            subgraph Bronze_Card [" "]
+                direction TB
+                B_SP["<div style='color:#fff; background:#2E86C1; border-radius:4px; padding:4px'>&lt;/&gt;</div><small>Ingestion Job</small>"]
+                B_DB[("📦<br>Persistent Storage")]
+                B_Meta["<div style='text-align:left;font-size:10px'>• Append-Only<br>• Schema-on-Read<br>• Historical Replay</div>"]
+                B_SP --> B_DB --> B_Meta
+            end
+        end
+
+        %% Quality Gate 1
+        Gate1{"⚠️<br><small>Validation</small>"}
+
+        %% Silver Layer
+        subgraph Silver ["<b>Silver (Enriched)</b>"]
+            direction TB
+            subgraph Silver_Card [" "]
+                direction TB
+                S_SP["<div style='color:#fff; background:#2E86C1; border-radius:4px; padding:4px'>&lt;/&gt;</div><small>Refining Logic</small>"]
+                S_DB[("🧹<br>Cleansed Data")]
+                S_Meta["<div style='text-align:left;font-size:10px'>• De-duplicated<br>• Unified Schema<br>• Delta/Parquet</div>"]
+                S_SP --> S_DB --> S_Meta
+            end
+        end
+
+        %% Quality Gate 2
+        Gate2{"✅<br><small>KPI Check</small>"}
+
+        %% Gold Layer
+        subgraph Gold ["<b>Gold (Curated)</b>"]
+            direction TB
+            subgraph Gold_Card [" "]
+                direction TB
+                G_Icon["💎"]
+                G_DB[("🏆<br>Aggregated Hub")]
+                G_Meta["<div style='text-align:left;font-size:10px'>• Dim/Fact Models<br>• Sub-second Query<br>• Semantic Layer</div>"]
+                G_Icon --> G_DB --> G_Meta
+            end
+        end
+
+        %% Logic Flow with Gates
+        Bronze ==> Gate1 ==> Silver
+        Silver ==> Gate2 ==> Gold
+    end
+
+    %% 3. MULTI-MODAL CONSUMPTION
+    subgraph Consume ["🚀 CONSUMPTION"]
+        direction TB
+        subgraph Consume_Card [" "]
+            direction TB
+            C1["📊 <b>Executive BI</b><br><small>Tableau / PowerBI</small>"]
+            C2["🔬 <b>Data Science</b><br><small>Jupyter / MLFlow</small>"]
+            C3["🔄 <b>Reverse ETL</b><br><small>Sync to CRM</small>"]
+            C1 --- C2 --- C3
+        end
+    end
+
+    %% Final Horizontal Pipeline
+    Sources ==> Bronze
+    Gold ==> Consume
+
+    %% STYLING IMPROVISATIONS
+    style DWH fill:#f8f9fa,stroke:#2c3e50,stroke-width:3px,stroke-dasharray: 10 5
+    style Sources fill:none,stroke:none
+    style Consume fill:none,stroke:none
+    
+    %% Card Aesthetics
+    style Sources_Card fill:#ffffff,stroke:#3498db,stroke-width:2px
+    style Bronze_Card fill:#ffffff,stroke:#cd7f32,stroke-width:2px
+    style Silver_Card fill:#ffffff,stroke:#95a5a6,stroke-width:2px
+    style Gold_Card fill:#ffffff,stroke:#f1c40f,stroke-width:3px
+    style Consume_Card fill:#ffffff,stroke:#8e44ad,stroke-width:2px
+
+    %% Gate Styling
+    style Gate1 fill:#fff5f5,stroke:#e74c3c
+    style Gate2 fill:#f0fff4,stroke:#27ae60
+
+    %% Node clean-up
+    style S_Icon fill:none,stroke:none
+    style B_SP fill:none,stroke:none
+    style S_SP fill:none,stroke:none
+    style G_Icon fill:none,stroke:none
+    style B_Meta fill:none,stroke:none
+    style S_Meta fill:none,stroke:none
+    style G_Meta fill:none,stroke:none
+    
