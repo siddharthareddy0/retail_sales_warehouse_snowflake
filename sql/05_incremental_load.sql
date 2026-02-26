@@ -1,11 +1,7 @@
--- =====================================================
--- 05_incremental_load.sql
--- Incremental Load with SCD Type 2 + Historical Join
--- =====================================================
+-- Incremental Load: Efficient data loading strategies
+-- Loads only new/changed data since last load
 
--- -----------------------------------------------------
--- Session Setup
--- -----------------------------------------------------
+-- Create watermark table to track last load times
 
 USE WAREHOUSE COMPUTE_WH;
 USE DATABASE SNOWFLAKE_LEARNING_DB;
@@ -79,7 +75,7 @@ JOIN SILVER.CUSTOMER_DIM d
 -- STEP 5: Validation
 -- -----------------------------------------------------
 
-SELECT * FROM SILVER.CUSTOMER_DIM
+SELECT COUNT(*) FROM SILVER.CUSTOMER_DIM
 ORDER BY customer_id, start_date;
 
 SELECT * FROM SILVER.FACT_SALES;

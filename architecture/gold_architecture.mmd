@@ -1,0 +1,25 @@
+flowchart TB
+    subgraph Bronze
+        A1[STORE_SALES_RAW]
+    end
+
+    subgraph Silver
+        B1[STORE_SALES_CLEAN]
+        B2[CUSTOMER_DIM - SCD2]
+        B3[FACT_SALES - Historical Join]
+    end
+
+    subgraph Gold
+        C1[SALES_BY_STATE]
+        C2[SALES_BY_YEAR]
+        C3[MONTHLY_SALES]
+        C4[TOP_STORES]
+    end
+
+    A1 --> B1
+    B1 --> B3
+    B2 --> B3
+    B3 --> C1
+    B3 --> C2
+    B3 --> C3
+    B3 --> C4
