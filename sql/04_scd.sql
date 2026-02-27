@@ -30,7 +30,7 @@ select
 
 select count(*) from silver.customer_dim;
 
-select * from silver.customer_dim limit 10;
+select * from silver.customer_dim;
 
 
 --create a small stage
